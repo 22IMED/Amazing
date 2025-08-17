@@ -68,13 +68,15 @@ def user_event_counts(events: SnowparkDataFrame) -> SnowparkDataFrame:
 
 
 def user_spent_stats(events: SnowparkDataFrame) -> SnowparkDataFrame:
-    """Total et prix moyen dépensé par utilisateur (uniquement events purchase)."""
+    """Total, prix moyen et date du dernier achat par utilisateur (uniquement events purchase)."""
     purchase_data = events.filter(F.col("EVENT_TYPE") == "purchase")
-    spent_avg = purchase_data.group_by("USER_ID").agg(
+    spent_stats = purchase_data.group_by("USER_ID").agg(
         F.sum("PRICE").alias("total_spent"),
         F.avg("PRICE").alias("avg_purchase_price"),
+        F.max("EVENT_TIME").alias("last_purchase_date")  
     )
-    return spent_avg
+    return spent_stats
+
 
 
 def user_diversity_stats(events: SnowparkDataFrame) -> SnowparkDataFrame:

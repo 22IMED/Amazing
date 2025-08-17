@@ -22,6 +22,13 @@ events:
   database: "AMAZING_DB"
   credentials: snowflake_client
 
+event_metrics:
+  type: pandas.CSVDataSet
+  filepath: data/01_raw/event_metrics.csv
+  load_args:
+    sep: ","  # ou "\t" si TSV
+
+
 events_cleaned:
   type: MemoryDataset
 
@@ -42,3 +49,14 @@ final_event_metrics:
   credentials: snowflake_client
   save_args:
     mode: "overwrite"
+
+
+rfm_kmeans_results:
+  type: MemoryDataset
+
+rfm_prepared:
+  type: MemoryDataset
+
+rfm_df:
+  type: pandas.ParquetDataSet
+  filepath: data/06_models/rfm_df.parquet
