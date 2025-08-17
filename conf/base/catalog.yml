@@ -2,16 +2,43 @@
 #
 # Documentation for this file format can be found in "The Data Catalog"
 # Link: https://docs.kedro.org/en/stable/data/data_catalog.html
+# events:
+#   type: kedro_datasets.snowflake.SnowparkTableDataset
+#   table_name: "EVENTS"
+#   schema: "SCHEMAS"
+#   database: "AMAZING_DB"
+#   credentials: snowflake_client
+# final_event_metrics:
+#   type: kedro_datasets.snowflake.SnowparkTableDataset
+#   table_name: "EVENT_METRICS"   # nom de la table de sortie
+#   schema: "SCHEMAS"
+#   database: "AMAZING_DB"
+#   credentials: snowflake_client
+#   if_exists: "replace"          # options : 'replace', 'append', 'fail'
 events:
   type: kedro_datasets.snowflake.SnowparkTableDataset
   table_name: "EVENTS"
   schema: "SCHEMAS"
   database: "AMAZING_DB"
   credentials: snowflake_client
+
+events_cleaned:
+  type: MemoryDataset
+
+events_filtered:
+  type: MemoryDataset
+
+user_event_counts:
+  type: MemoryDataset
+
+user_spent_stats:
+  type: MemoryDataset
+
 final_event_metrics:
   type: kedro_datasets.snowflake.SnowparkTableDataset
-  table_name: "EVENT_METRICS"   # nom de la table de sortie
+  table_name: "EVENT_METRICS"
   schema: "SCHEMAS"
   database: "AMAZING_DB"
   credentials: snowflake_client
-  if_exists: "replace"          # options : 'replace', 'append', 'fail'
+  save_args:
+    mode: "overwrite"
