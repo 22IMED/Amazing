@@ -6,6 +6,10 @@ conf/local/**
 !conf/local/.gitkeep
 !conf/local/credentials_exemple.yml
 .telemetry
+outputs/
+*.joblib
+*.csv
+.venv/
 
 # ignore potentially sensitive credentials files
 # conf/**/*credentials*
