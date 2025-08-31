@@ -1,101 +1,133 @@
-# mspr2
+# 📊 Segmentation Clients avec Kedro & Snowflake
 
-[![Powered by Kedro](https://img.shields.io/badge/powered_by-kedro-ffc900?logo=kedro)](https://kedro.org)
+[![Powered by Kedro](https://img.shields.io/badge/powered_by-kedro-ffc900?logo=kedro)](https://kedro.org)  
+[![Snowflake](https://img.shields.io/badge/Data%20Warehouse-Snowflake-blue?logo=snowflake)](https://www.snowflake.com/)  
+[![Docker](https://img.shields.io/badge/Deploy-Docker-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)  
 
-## Overview
+---
 
-This is your new Kedro project, which was generated using `kedro 1.0.0`.
+## 📝 Aperçu du projet
 
-Take a look at the [Kedro documentation](https://docs.kedro.org) to get started.
+Ce projet met en place un **prototype de solution d’IA** permettant de :  
+- Préparer et transformer les données d’événements clients (**ETL Kedro**)  
+- Construire des indicateurs **RFM enrichis** (Recency, Frequency, Monetary + comportements)  
+- Appliquer un modèle de **clustering KMeans** pour classer les clients selon leur profil  
+- Stocker les résultats (clients classés) dans **Snowflake** via **Snowpark**  
+- Fournir une pipeline prête à être packagée dans **Docker** pour un déploiement en production  
 
-## Rules and guidelines
+---
 
-In order to get the best out of the template:
+## ⚙️ Architecture du projet
 
-* Don't remove any lines from the `.gitignore` file we provide
-* Make sure your results can be reproduced by following a data engineering convention
-* Don't commit data to your repository
-* Don't commit any credentials or your local configuration to your repository. Keep all your credentials and local configuration in `conf/local/`
+Flux de traitement :  
 
-## How to install dependencies
+**Événements clients → ETL Kedro → Préparation RFM → Modèle KMeans → Résultats dans Snowflake**
 
-Declare any dependencies in `requirements.txt` for `pip` installation.
+Les pipelines sont organisés en *nodes* modulaires :  
 
-To install them, run:
+- `prepare_rfm_node` → Préparation des features  
+- `train_model_node` → Entraînement et évaluation (inertia, silhouette)  
+- `predict_new_clients_node` → Classification des nouveaux clients  
+- `store_results_node` → Sauvegarde des résultats dans Snowflake  
 
+Exemple d’architecture (Mermaid) :  
+
+```mermaid
+flowchart LR
+    A[Snowflake Events] --> B[ETL Kedro]
+    B --> C[Features RFM]
+    C --> D[Modèle KMeans]
+    D --> E[Clients Classés]
+    E --> F[(Table Snowflake)]
 ```
+
+---
+
+## 🚀 Installation
+
+Cloner le projet et installer les dépendances :  
+
+```bash
+git clone <url-du-repo>
+cd mspr2
 pip install -r requirements.txt
 ```
 
-## How to run your Kedro pipeline
+Configurer vos accès **Snowflake** dans `conf/local/credentials.yml`  
+⚠️ Ne jamais commiter vos credentials.  
 
-You can run your Kedro project with:
+---
 
-```
+## ▶️ Exécution des pipelines
+
+Lancer l’ETL et le pipeline de classification :  
+
+```bash
 kedro run
 ```
 
-## How to test your Kedro project
+Exemple pour lancer uniquement la prédiction de nouveaux clients :  
 
-Have a look at the file `tests/test_run.py` for instructions on how to write your tests. You can run your tests as follows:
-
+```bash
+kedro run --pipeline prediction
 ```
+
+---
+
+## 🧪 Tests
+
+Les tests unitaires sont définis dans `tests/`. Pour les exécuter :  
+
+```bash
 pytest
 ```
 
-You can configure the coverage threshold in your project's `pyproject.toml` file under the `[tool.coverage.report]` section.
+Vous pouvez configurer le seuil de couverture dans `pyproject.toml`.  
 
+---
 
-## Project dependencies
+## 🐳 Déploiement avec Docker
 
-To see and update the dependency requirements for your project use `requirements.txt`. You can install the project requirements with `pip install -r requirements.txt`.
+Une image Docker est disponible pour exécuter le pipeline dans un environnement isolé.  
 
-[Further information about project dependencies](https://docs.kedro.org/en/stable/kedro_project_setup/dependencies.html#project-specific-dependencies)
-
-## How to work with Kedro and notebooks
-
-> Note: Using `kedro jupyter` or `kedro ipython` to run your notebook provides these variables in scope: `context`, 'session', `catalog`, and `pipelines`.
->
-> Jupyter, JupyterLab, and IPython are already included in the project requirements by default, so once you have run `pip install -r requirements.txt` you will not need to take any extra steps before you use them.
-
-### Jupyter
-To use Jupyter notebooks in your Kedro project, you need to install Jupyter:
-
-```
-pip install jupyter
+Construire l’image :  
+```bash
+docker build -t mspr2:latest .
 ```
 
-After installing Jupyter, you can start a local notebook server:
-
-```
-kedro jupyter notebook
-```
-
-### JupyterLab
-To use JupyterLab, you need to install it:
-
-```
-pip install jupyterlab
+Lancer un conteneur :  
+```bash
+docker run --rm -it mspr2:latest kedro run
 ```
 
-You can also start JupyterLab:
+---
+
+## 📂 Structure du projet
 
 ```
-kedro jupyter lab
+mspr2/
+├── conf/                 # Configuration Kedro (credentials, catalogues, params…)
+├── data/                 # Données locales (jamais commit)
+├── src/mspr2/            # Code source Kedro (pipelines, nodes, hooks…)
+├── tests/                # Tests unitaires
+├── requirements.txt      # Dépendances Python
+└── README.md             # Ce fichier
 ```
 
-### IPython
-And if you want to run an IPython session:
+---
 
-```
-kedro ipython
-```
+## 📊 Résultats attendus
 
-### How to ignore notebook output cells in `git`
-To automatically strip out all output cell contents before committing to `git`, you can use tools like [`nbstripout`](https://github.com/kynan/nbstripout). For example, you can add a hook in `.git/config` with `nbstripout --install`. This will run `nbstripout` before anything is committed to `git`.
+- Segmentation automatique des clients en **clusters** basés sur leur comportement  
+- Table Snowflake mise à jour contenant les clients classés  
+- Pipelines modulaires pour s’intégrer facilement dans un environnement de production  
 
-> *Note:* Your output cells will be retained locally.
+---
 
-## Package your Kedro project
+## 📚 Références
 
-[Further information about building project documentation and packaging your project](https://docs.kedro.org/en/stable/tutorial/package_a_project.html)
+- [Documentation Kedro](https://docs.kedro.org)  
+- [Snowflake Snowpark](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)  
+- [Scikit-Learn Clustering](https://scikit-learn.org/stable/modules/clustering.html)  
+
+---
