@@ -93,7 +93,7 @@ Construire l’image :
 docker build -t mspr2:latest .
 ```
 
-Lancer un conteneur :  
+Lancer le conteneur sur le cloud :  
 ```bash
 docker run --rm -it \
   -e SNOWFLAKE_USER=xxx \
