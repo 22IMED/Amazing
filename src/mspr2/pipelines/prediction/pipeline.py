@@ -6,11 +6,9 @@ def create_pipeline(**kwargs):
         [
             node(
                 func=predict_new_clients,
-                inputs=dict(
-                    test_events="test_events",
-                    kmeans_model_path="params:kmeans_model_path"  # <-- ici
-                ),
+                inputs=["test_events", "params:kmeans_model_path"],
                 outputs="calssifiesd_clients",
+                name="predict_new_clients_node",
             )
         ]
     )

@@ -71,6 +71,7 @@ test_events:
 
 calssifiesd_clients:
   type: kedro_datasets.snowflake.SnowparkTableDataset
+  #type: kedro_datasets.snowflake.pandas.SnowflakeTableDataset
   table_name: "calssifiesd_clients"
   schema: "SCHEMAS"
   database: "AMAZING_DB"

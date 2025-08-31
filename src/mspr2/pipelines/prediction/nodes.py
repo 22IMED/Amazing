@@ -2,7 +2,9 @@ from snowflake.snowpark import functions as F
 from snowflake.snowpark import DataFrame as SnowparkDataFrame
 import pandas as pd
 import joblib
+from snowflake.snowpark.session import Session
 from sklearn.preprocessing import StandardScaler
+
 from ..nodes import (
     clean_events,
     filter_events,
@@ -15,6 +17,8 @@ from ..modeling_nodes import (
     prepare_rfm,
 )
 import numpy as np
+
+
 
 def predict_new_clients(test_events: SnowparkDataFrame, kmeans_model_path: str) -> SnowparkDataFrame:
     """
@@ -69,7 +73,12 @@ def predict_new_clients(test_events: SnowparkDataFrame, kmeans_model_path: str) 
     # Ajouter la classe au DataFrame
     df_pd["CLIENT_CLASS"] = labels
 
+    # 5. Convertir Pandas → Snowpark
+    session = test_events.session  # récupérer la session Snowpark existante
+    result_df = session.create_dataframe(
+        df_pd[["USER_ID", "CLIENT_CLASS"]].values.tolist(),
+        schema=["USER_ID", "CLIENT_CLASS"]
+    )
 
-    # RETURN le DataFrame Pandas
-    return df_pd[["USER_ID", "CLIENT_CLASS"]]
-    
+    return result_df
+
