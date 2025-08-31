@@ -60,3 +60,20 @@ rfm_prepared:
 rfm_df:
   type: pandas.ParquetDataSet
   filepath: data/06_models/rfm_df.parquet
+
+
+test_events:
+  type: kedro_datasets.snowflake.SnowparkTableDataset
+  table_name: "TEST_EVENTS"
+  schema: "SCHEMAS"
+  database: "AMAZING_DB"
+  credentials: snowflake_client
+
+calssifiesd_clients:
+  type: kedro_datasets.snowflake.SnowparkTableDataset
+  table_name: "calssifiesd_clients"
+  schema: "SCHEMAS"
+  database: "AMAZING_DB"
+  credentials: snowflake_client
+  save_args:
+    mode: "overwrite"

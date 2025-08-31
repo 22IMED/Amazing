@@ -13,7 +13,7 @@ COLUMNS_TO_FILL_NA = {
 DATETIME_COLUMNS = ["EVENT_TIME"]
 NUMERIC_COLUMNS = ["price"]
 VALID_EVENT_TYPES = ["purchase", "cart", "view"]
-PRICE_MIN_THRESHOLD = 0.01
+PRICE_MIN_THRESHOLD = 0.0
 PRICE_MAX_THRESHOLD = 10000.0
 
 
@@ -59,11 +59,15 @@ def filter_events(events: SnowparkDataFrame) -> SnowparkDataFrame:
 
 def user_event_counts(events: SnowparkDataFrame) -> SnowparkDataFrame:
     """Nombre d'événements par utilisateur (purchase/view/cart)."""
+    print("user_event_counts")
+    events.filter(events["EVENT_TYPE"]=='view').show(5)
     event_counts = events.group_by("USER_ID").agg(
         F.sum(F.when(F.col("EVENT_TYPE") == "purchase", 1).otherwise(0)).alias("purchase"),
         F.sum(F.when(F.col("EVENT_TYPE") == "view", 1).otherwise(0)).alias("view"),
         F.sum(F.when(F.col("EVENT_TYPE") == "cart", 1).otherwise(0)).alias("cart"),
     )
+    print("event_counts")
+    event_counts.show(5)
     return event_counts
 
 
