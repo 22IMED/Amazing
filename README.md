@@ -95,7 +95,16 @@ docker build -t mspr2:latest .
 
 Lancer un conteneur :  
 ```bash
-docker run --rm -it mspr2:latest kedro run --pipeline=prediction_pipeline
+docker run --rm -it \
+  -e SNOWFLAKE_USER=xxx \
+  -e SNOWFLAKE_PASSWORD=xxx \
+  -e SNOWFLAKE_ACCOUNT=xxx \
+  -e SNOWFLAKE_WAREHOUSE=xxx \
+  -e SNOWFLAKE_DATABASE=AMAZING_DB \
+  -e SNOWFLAKE_SCHEMA=SCHEMAS \
+  mspr2-prediction:latest \
+  kedro run --pipeline=prediction_pipeline
+
 ```
 
 ---
