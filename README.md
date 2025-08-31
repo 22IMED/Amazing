@@ -54,7 +54,16 @@ pip install -r requirements.txt
 ```
 
 Configurer vos accès **Snowflake** dans `conf/local/credentials.yml`  
-⚠️ Ne jamais commiter vos credentials.  
+
+export SNOWFLAKE_USER=xxx
+export SNOWFLAKE_PASSWORD=xxx
+export SNOWFLAKE_ACCOUNT=xxx
+export SNOWFLAKE_WAREHOUSE=xxx
+export SNOWFLAKE_DATABASE=AMAZING_DB
+export SNOWFLAKE_SCHEMA=SCHEMAS
+
+
+⚠️ Ne jamais commiter vos credentials dans le repository.
 
 ---
 
@@ -86,7 +95,7 @@ docker build -t mspr2:latest .
 
 Lancer un conteneur :  
 ```bash
-docker run --rm -it mspr2:latest kedro run
+docker run --rm -it mspr2:latest kedro run --pipeline=prediction_pipeline
 ```
 
 ---
