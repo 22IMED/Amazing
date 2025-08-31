@@ -74,17 +74,6 @@ kedro run --pipeline prediction
 
 ---
 
-## 🧪 Tests
-
-Les tests unitaires sont définis dans `tests/`. Pour les exécuter :  
-
-```bash
-pytest
-```
-
-Vous pouvez configurer le seuil de couverture dans `pyproject.toml`.  
-
----
 
 ## 🐳 Déploiement avec Docker
 
